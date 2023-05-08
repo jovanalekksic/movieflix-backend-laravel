@@ -6,6 +6,8 @@ use App\Http\Resources\MovieCollection;
 use App\Http\Resources\MovieResource;
 use App\Models\Movie;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Validator;
 
 class MovieController extends Controller
 {
@@ -39,8 +41,41 @@ class MovieController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $validator = Validator::make($request->all(), [
+            'title' => 'required|string|max:255',
+            'description' => 'required',
+            'rating' => 'required',
+            'picture' => 'required',
+            'genre_id' => 'required',
+            'studio_id' => 'required',
+
+
+        ]);
+        if ($validator->fails()) {
+            return response()->json($validator->errors());
+        }
+
+        $movie = Movie::create([
+            'title' => $request->title,
+            'description' => $request->description,
+            'rating' => $request->rating,
+            'picture' => $request->picture,
+            'genre_id' => $request->genre_id,
+            'studio_id' => $request->studio_id,
+            'user_id' => Auth::user()->id
+        ]);
+
+        return response()->json(['Movie created successfully.', new MovieResource($movie)]);
     }
+
+    // {
+    //     "title":"Titanic",
+    //     "description":"A seventeen-year-old aristocrat falls in love with a kind but poor artist aboard the luxurious, ill-fated R.M.S. Titanic.",
+    //     "rating":7.9,
+    //     "picture":"https://e1.pxfuel.com/desktop-wallpaper/1022/641/desktop-wallpaper-titanic-movie-poster-titanic-film.jpg",
+    //     "genre_id":4,
+    //     "studio_id":5
+    // }
 
     /**
      * Display the specified resource.
@@ -75,7 +110,28 @@ class MovieController extends Controller
      */
     public function update(Request $request, Movie $movie)
     {
-        //
+        $validator = Validator::make($request->all(), [
+            'title' => 'required|string|max:255',
+            'description' => 'required',
+            'rating' => 'required',
+            'picture' => 'required',
+            'genre_id' => 'required',
+            'studio_id' => 'required',
+
+        ]);
+        if ($validator->fails()) {
+            return response()->json($validator->errors());
+        }
+
+        $movie->title = $request->title;
+        $movie->description = $request->description;
+        $movie->rating = $request->rating;
+        $movie->picture = $request->picture;
+        $movie->genre_id = $request->genre_id;
+        $movie->studio_id = $request->studio_id;
+
+        $movie->save();
+        return response()->json(['Movie updated successfully.', new MovieResource($movie)]);
     }
 
     /**
@@ -86,6 +142,7 @@ class MovieController extends Controller
      */
     public function destroy(Movie $movie)
     {
-        //
+        $movie->delete();
+        return response()->json('Movie deleted successfully');
     }
 }

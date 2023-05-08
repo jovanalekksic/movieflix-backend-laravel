@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\API\AuthController;
 use App\Http\Controllers\MovieController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\UserMovieController;
@@ -30,3 +31,16 @@ Route::resource('users.posts', UserMovieController::class);
 Route::get('/users/{id}', [UserController::class, 'show'])->name('users.show');
 Route::get('/users', [UserController::class, 'index'])->name('users.index');
 Route::get('/users/{id}/movies', [UserMovieController::class, 'index'])->name('users.movies.index');
+
+Route::post('/register', [AuthController::class, 'register']);
+Route::post('/login', [AuthController::class, 'login']);
+
+Route::group(['middleware' => ['auth:sanctum']], function () {
+    Route::get('/profile', function (Request $request) {
+        return auth()->user();
+    });
+
+    Route::resource('movies', MovieController::class)->only(['store', 'update', 'destroy']);
+
+    Route::post('/logout', [AuthController::class, 'logout']);
+});

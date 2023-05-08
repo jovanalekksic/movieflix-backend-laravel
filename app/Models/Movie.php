@@ -18,8 +18,7 @@ class Movie extends Model
         'studio_id',
         'user_id',
         'genre_id',
-        'nameG',
-        'nameS'
+
 
     ];
 
