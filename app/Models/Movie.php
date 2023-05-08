@@ -18,7 +18,8 @@ class Movie extends Model
         'studio_id',
         'user_id',
         'genre_id',
-        'name',
+        'nameG',
+        'nameS'
 
     ];
 
@@ -32,6 +33,6 @@ class Movie extends Model
     }
     public function user()
     {
-        return $this->hasMany(User::class, 'user_id');
+        return $this->belongsTo(User::class, 'user_id');
     }
 }
