@@ -44,4 +44,11 @@ class AuthController extends Controller
         $token = $user->createToken('auth_token')->plainTextToken;
         return response()->json(['success' => true, 'access_token' => $token, 'token_type' => 'Bearer',]);
     }
+    public function logout()
+    {
+        auth()->user()->tokens()->delete();
+        return [
+            'message' => 'You have logged out. The Token was deleted'
+        ];
+    }
 }
